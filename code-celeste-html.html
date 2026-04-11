@@ -692,7 +692,9 @@ const FAQS = [
 /* À réactiver avec de vrais témoignages clients quand disponibles */
 const FORM_STEPS = [
   { q:"Quel est votre métier ?",              opts:["Couvreur","Plombier","Électricien","Maçon","Photovoltaïque","Paysagiste","Climaticien","Pisciniste","Autre"], key:"metier" },
-  { q:"Avez-vous déjà un site internet ?",    opts:["Oui, mais je veux mieux","Non, pas encore"], key:"site_existant" },
+  { q:"Avez-vous déjà un site internet ?",    opts:["Oui, mais je veux mieux","Non, j'en veux un"], key:"site_existant" },
+  { q:"Quel est votre objectif principal ?",  opts:["Plus de clients","Être visible sur Google","Avoir un site pro","Moderniser mon image"], key:"objectif" },
+  { q:"Quelle est votre problématique actuelle ?", opts:["Pas assez de visibilité","Mon site est trop vieux","Trop cher ailleurs","Je ne sais pas par où commencer"], key:"problematique" },
 ];
 
 /* ════════════════════════════════════
@@ -879,10 +881,10 @@ let formStep = 0;
 let formData = {};
 let contactData = { prenom:'', nom:'', telephone:'', entreprise:'', site:'' };
 
-function openModal() { formStep = 0; formData = {}; contactData = { prenom:'', telephone:'', entreprise:'' }; renderModal(); document.getElementById('modal').style.display = 'flex'; }
+function openModal() { formStep = 0; formData = {}; contactData = { prenom:'', nom:'', telephone:'', entreprise:'', site:'' }; renderModal(); document.getElementById('modal').style.display = 'flex'; }
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-function totalSteps() { return FORM_STEPS.length + 1; } // qualification + coordonnées
+function totalSteps() { return FORM_STEPS.length + 2; } // steps + contact + calendar
 
 function pct() { return Math.round((formStep / totalSteps()) * 100); }
 
@@ -914,12 +916,21 @@ function renderModal() {
     el.innerHTML = progressHTML() +
       `<div class="form-q">Vos coordonnées</div>
        <div class="form-field"><label for="f-prenom">Prénom *</label><input id="f-prenom" type="text" placeholder="Jean-Pierre" value="${contactData.prenom}" oninput="contactData.prenom=this.value" /></div>
+       <div class="form-field"><label for="f-nom">Nom *</label><input id="f-nom" type="text" placeholder="Dupont" value="${contactData.nom}" oninput="contactData.nom=this.value" /></div>
        <div class="form-field"><label for="f-tel">Téléphone *</label><input id="f-tel" type="tel" placeholder="0692 XX XX XX" value="${contactData.telephone}" oninput="contactData.telephone=this.value" /></div>
        <div class="form-field"><label for="f-ent">Entreprise *</label><input id="f-ent" type="text" placeholder="Couverture Dupont" value="${contactData.entreprise}" oninput="contactData.entreprise=this.value" /></div>
+       <div class="form-field"><label for="f-site">Site actuel (optionnel)</label><input id="f-site" type="text" placeholder="www.monsite.re" value="${contactData.site}" oninput="contactData.site=this.value" /></div>
        <div id="form-error" style="display:none;color:#f87171;font-size:13px;text-align:center;margin-bottom:8px;"></div>
-       <button class="cta-main btn-primary" style="margin-top:4px;" onclick="submitForm()">Maxime me rappelle →</button>
+       <button class="cta-main btn-primary" style="margin-top:4px;" onclick="nextStepContact()">Continuer →</button>
        <button class="btn-back" onclick="prevStep()">← Retour</button>
        <p class="form-note">🔒 Données confidentielles. Zéro spam.</p>`;
+  } else if (formStep === FORM_STEPS.length + 1) {
+    el.innerHTML = progressHTML() +
+      `<div class="form-q" style="margin-bottom:10px;">Choisissez votre créneau</div>
+       <p style="text-align:center;color:#8b8bab;font-size:13px;margin-bottom:20px;">Appel découverte gratuit avec Maxime</p>
+       <div class="cal-placeholder">📅 Calendrier de réservation (intégrez votre lien Calendly / GHL ici)</div>
+       <button class="cta-main btn-primary" onclick="submitForm()">Confirmer mon RDV →</button>
+       <button class="btn-back" onclick="prevStep()">← Retour</button>`;
   } else {
     // Success
     el.innerHTML = `<div class="text-center" style="padding:20px 0;">
@@ -941,25 +952,30 @@ function pickChoice(key, val) {
   setTimeout(() => { formStep++; renderModal(); }, 280);
 }
 function prevStep() { if (formStep > 0) { formStep--; renderModal(); } }
-function submitForm() {
+function nextStepContact() {
   const p = document.getElementById('f-prenom');
+  const n = document.getElementById('f-nom');
   const t = document.getElementById('f-tel');
   const e = document.getElementById('f-ent');
   if (p) contactData.prenom = p.value;
+  if (n) contactData.nom = n.value;
   if (t) contactData.telephone = t.value;
   if (e) contactData.entreprise = e.value;
-  if (!contactData.prenom || !contactData.telephone || !contactData.entreprise) {
+  if (!contactData.prenom || !contactData.nom || !contactData.telephone || !contactData.entreprise) {
     const errEl = document.getElementById('form-error');
     if (errEl) { errEl.textContent = 'Merci de remplir tous les champs obligatoires (*)'; errEl.style.display = 'block'; }
     return;
   }
+  formStep++; renderModal();
+}
+function submitForm() {
   // TODO: envoyer les données vers votre API backend
   // fetch('https://votre-api.codeceleste.re/leads', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
   //   body: JSON.stringify({ ...formData, ...contactData })
   // });
-  formStep = FORM_STEPS.length + 1;
+  formStep = FORM_STEPS.length + 2;
   renderModal();
 }
 
