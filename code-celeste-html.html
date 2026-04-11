@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Code Céleste – Sites internet pour artisans à La Réunion</title>
   <meta name="description" content="Votre site pro en 7 jours. Première page gratuite, sans engagement. Spécialiste artisans & BTP à La Réunion." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='4' y='4' width='92' height='92' rx='18' fill='%230a0a1a' stroke='%237C3AED' stroke-width='3'/><text x='50' y='62' text-anchor='middle' font-size='40' fill='%23A770FF'>CC</text></svg>" />
+  <meta property="og:title" content="Code Céleste – Votre site internet pro en 7 jours" />
+  <meta property="og:description" content="Première page gratuite, sans engagement. Sites sur-mesure pour artisans à La Réunion. À partir de 1 000€." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Code Céleste – Sites internet pour artisans à La Réunion" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -166,17 +173,8 @@
     .success-list li { display:flex; align-items:center; gap:8px; font-size:13px; color:#8b8bab; padding:4px 0; }
     .cal-placeholder { background:rgba(124,58,237,.05); border-radius:12px; padding:36px; border:1px dashed rgba(124,58,237,.3); text-align:center; color:#8b8bab; font-size:13px; margin-bottom:20px; }
 
-    /* ── Toast ── */
-    #toast { position:fixed; bottom:24px; right:24px; z-index:90; background:#151530; border:1px solid rgba(124,58,237,.2); border-radius:14px; padding:14px 18px; display:none; align-items:center; gap:12px; box-shadow:0 8px 32px rgba(0,0,0,.4); max-width:340px; }
-    #toast .dot { width:10px; height:10px; border-radius:50%; background:#34d399; box-shadow:0 0 8px #34d399; flex-shrink:0; }
-    #toast .t-name { font-size:13px; font-weight:700; line-height:1.3; }
-    #toast .t-time { font-size:11px; color:#8b8bab; }
-
-    /* ── Online badge ── */
-    #online-badge { position:fixed; bottom:24px; left:24px; z-index:90; background:#151530; border:1px solid rgba(52,211,153,.2); border-radius:20px; padding:8px 16px; display:flex; align-items:center; gap:8px; box-shadow:0 4px 20px rgba(0,0,0,.3); }
-    #online-badge .dot { width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 8px #34d399; }
-    #online-badge span { font-size:12px; font-weight:600; color:#8b8bab; }
-    #online-badge strong { color:#ededf4; font-weight:800; }
+    /* ── WhatsApp button ── */
+    #whatsapp-btn:hover { transform:scale(1.1); }
 
     /* ── Exit popup ── */
     #exit-overlay { display:none; }
@@ -194,12 +192,236 @@
     footer .logo { display:flex; align-items:center; gap:8px; font-size:13px; color:#8b8bab; }
     footer .tagline { font-size:12px; color:#8b8bab; }
 
-    /* ── Responsive ── */
+    /* ══════════════════════════════════
+       ACCESSIBILITÉ & INTERACTIONS
+    ══════════════════════════════════ */
+
+    /* Focus visible pour navigation clavier */
+    *:focus-visible {
+      outline: 2px solid #A770FF;
+      outline-offset: 2px;
+    }
+    button:focus-visible, .choice-btn:focus-visible, .faq-toggle:focus-visible {
+      outline: 2px solid #A770FF;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px rgba(167,112,255,.25);
+    }
+    .form-field input:focus-visible {
+      border-color: #7C3AED;
+      box-shadow: 0 0 0 3px rgba(124,58,237,.2);
+    }
+
+    /* Active states pour feedback tactile mobile */
+    .cta-main:active { transform:scale(0.97); }
+    .btn-hero:active { transform:scale(0.97); }
+    .choice-btn:active { background:rgba(124,58,237,.3); border-color:#A770FF; }
+    .faq-toggle:active { background:rgba(124,58,237,.06); }
+
+    /* Sélection de texte */
+    ::selection { background:rgba(124,58,237,.35); color:#fff; }
+    ::-moz-selection { background:rgba(124,58,237,.35); color:#fff; }
+
+    /* Réduction de mouvement (accessibilité) */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+      .reveal { opacity:1; transform:none; }
+      .shimmer-text {
+        -webkit-text-fill-color: #A770FF;
+        animation: none;
+      }
+    }
+
+    /* Safe area pour iPhone X+ (notch & barre Home) */
+    @supports (padding: env(safe-area-inset-top)) {
+      #nav { padding-top: calc(10px + env(safe-area-inset-top)); }
+      #hero { padding-top: calc(120px + env(safe-area-inset-top)); }
+      #whatsapp-btn { bottom: calc(24px + env(safe-area-inset-bottom)); }
+      .modal-inner { padding-bottom: calc(36px + env(safe-area-inset-bottom)); }
+      footer { padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
+    }
+
+    /* Fallback backdrop-filter */
+    @supports not (backdrop-filter: blur(1px)) {
+      #nav { background: rgba(10,10,26,.97); }
+      .modal-bg { background: rgba(0,0,0,.92); }
+    }
+
+    /* Touch targets minimum 44px */
+    .btn-nav { min-height:44px; min-width:44px; padding:10px 20px; }
+    .modal-close { min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; }
+    .btn-back { min-height:44px; padding:10px 0; }
+    .choice-btn { min-height:44px; padding:14px 18px; }
+    .btn-primary { min-height:44px; }
+
+    /* ══════════════════════════════════
+       RESPONSIVE - TABLETTE PAYSAGE
+    ══════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .founder-box { gap:28px; }
+      .founder-avatar { flex:0 0 180px; }
+    }
+
+    /* ══════════════════════════════════
+       RESPONSIVE - TABLETTE PORTRAIT
+    ══════════════════════════════════ */
+    @media (max-width: 768px) {
+      section { padding:50px 20px; }
+      .container, .container-sm { padding:0 20px; }
+
+      .founder-box { flex-direction:column; align-items:center; text-align:center; gap:24px; padding:clamp(24px,4vw,40px); }
+      .founder-avatar { flex:0 0 auto; }
+
+      .offer-box { padding:32px 24px; }
+
+      .stats-bar { grid-template-columns:repeat(3, 1fr); gap:16px; }
+
+      /* Tableau : réduction du gap interne */
+      .comp-header div { padding:14px 12px; font-size:12px; }
+      .comp-row .label { padding:14px 12px; font-size:13px; }
+      .comp-row .bad, .comp-row .good { padding:14px 10px; font-size:13px; }
+
+      /* Désactiver les animations décoratives flottantes sur tablette et moins */
+      .float-anim, .float-anim2, .float-anim3 { animation:none; }
+
+      #hero { padding-top:100px; padding-bottom:70px; }
+    }
+
+    /* ══════════════════════════════════
+       RESPONSIVE - MOBILE STANDARD
+    ══════════════════════════════════ */
     @media (max-width: 600px) {
-      .founder-box { flex-direction:column; align-items:center; text-align:center; }
+      section { padding:40px 16px; }
+      .container, .container-sm { padding:0 16px; }
+
+      /* Nav */
+      #nav { padding:8px 16px; }
+      #nav .logo { font-size:14px; gap:8px; }
+      #nav .logo svg { width:30px; height:30px; }
+
+      /* Hero */
+      #hero { padding-top:85px; padding-bottom:60px; }
+      #hero .subtitle { font-size:16px; margin-bottom:28px; }
+      .btn-hero { padding:16px 28px; font-size:17px; width:100%; justify-content:center; }
+      .hero-fine { font-size:12px; }
+
+      /* Cartes */
+      .card-grid { grid-template-columns:1fr; gap:14px; }
+      .card { padding:22px; }
+
+      /* Tableau comparatif -- masquer les SVG sur mobile pour gagner de la place */
+      .comp-header div { padding:12px 8px; font-size:11px; }
+      .comp-row { grid-template-columns:1.4fr 0.8fr 0.8fr; }
       .comp-row .label { font-size:12px; padding:12px 10px; }
-      .comp-row .bad, .comp-row .good { padding:12px 6px; font-size:12px; }
-      .modal-inner { padding:24px 18px; }
+      .comp-row .bad, .comp-row .good { padding:12px 6px; font-size:11px; gap:4px; }
+      .comp-row .bad svg, .comp-row .good svg { width:14px; height:14px; flex-shrink:0; }
+      .comp-row .bad span, .comp-row .good span { font-size:11px; }
+
+      /* Steps */
+      .step { padding:16px; gap:14px; }
+      .step-icon { width:42px; height:42px; font-size:20px; border-radius:12px; }
+      .step-body h3 { font-size:14px; }
+      .step-body p { font-size:13px; }
+
+      /* Offer */
+      .offer-box { padding:28px 18px; border-radius:18px; }
+      .offer-label { font-size:11px; padding:4px 16px; }
+      .checklist li { font-size:14px; gap:10px; }
+
+      /* Garantie */
+      .guarantee-box { padding:32px 20px; }
+      .g-chips { gap:10px; }
+      .g-chip { padding:8px 14px; font-size:13px; }
+
+      /* Modal */
+      .modal-backdrop { padding:12px; }
+      .modal-inner { padding:24px 18px; border-radius:18px; max-height:92vh; }
+      .form-q { font-size:17px; margin-bottom:14px; }
+
+      /* WhatsApp bouton mobile */
+      #whatsapp-btn { bottom:16px; right:16px; width:50px; height:50px; }
+
+      /* Footer */
+      footer { flex-direction:column; align-items:center; text-align:center; padding:18px 16px; gap:8px; }
+
+      /* Final CTA */
+      #final-cta { padding:60px 16px 80px; }
+      #final-cta p { font-size:15px; }
+
+      /* Éléments décoratifs absolus -- réduction pour éviter les débordements */
+      #hero .float-anim, #hero .float-anim2,
+      #final-cta .float-anim { width:180px !important; height:180px !important; }
+
+      /* Masquer le glow continu sur mobile pour économiser la batterie */
+      .cta-glow { animation:none; box-shadow:0 0 30px rgba(124,58,237,.15); }
+    }
+
+    /* ══════════════════════════════════
+       RESPONSIVE - PETIT MOBILE (iPhone SE, 375px et moins)
+    ══════════════════════════════════ */
+    @media (max-width: 375px) {
+      #nav .logo { font-size:13px; }
+      .btn-nav { padding:10px 14px; font-size:13px; }
+
+      #hero h1 { font-size:28px; }
+      #hero .subtitle { font-size:15px; }
+      .btn-hero { padding:14px 20px; font-size:15px; }
+      .badge { font-size:12px; padding:6px 14px; }
+
+      /* Tableau comparatif : passer en layout empilé */
+      .comp-header { display:none; }
+      .comp-row {
+        display:flex; flex-direction:column; gap:6px;
+        padding:14px 12px; border-bottom:1px solid rgba(255,255,255,.06);
+      }
+      .comp-row .label { padding:0; font-size:13px; font-weight:700; }
+      .comp-row .bad { padding:4px 0; font-size:12px; justify-content:flex-start; background:none; }
+      .comp-row .good { padding:4px 0; font-size:12px; justify-content:flex-start; background:none; }
+      .comp-row .bad::before { content:"Agence : "; color:#8b8bab; font-size:11px; }
+      .comp-row .good::before { content:"Code Céleste : "; color:#8b8bab; font-size:11px; }
+
+      /* Steps */
+      .step { flex-direction:column; align-items:flex-start; gap:10px; }
+      .step-body { width:100%; }
+
+      /* Offer */
+      .offer-box { padding:24px 14px; }
+      .offer-price { font-size:32px; }
+      .checklist li { font-size:13px; }
+
+      /* Modal */
+      .modal-inner { padding:20px 14px; }
+      .form-q { font-size:16px; }
+      .choice-btn { font-size:14px; }
+      .form-field input { padding:12px 14px; font-size:14px; }
+
+      /* Garantie chips en colonne */
+      .g-chips { flex-direction:column; align-items:center; }
+      .g-chip { width:100%; justify-content:center; }
+
+      /* Stats bar */
+      .stats-bar { grid-template-columns:1fr; gap:14px; }
+      .stat-item .num { font-size:28px; }
+    }
+
+    /* ══════════════════════════════════
+       RESPONSIVE - TRÈS PETIT MOBILE (320px, vieux téléphones)
+    ══════════════════════════════════ */
+    @media (max-width: 320px) {
+      section { padding:30px 12px; }
+      .container, .container-sm { padding:0 12px; }
+      #nav { padding:8px 12px; }
+      #hero { padding-top:75px; }
+      #hero h1 { font-size:24px; }
+      .btn-hero { padding:12px 16px; font-size:14px; }
+      .card { padding:18px; }
+      .card h3 { font-size:16px; }
+      .offer-box { padding:20px 12px; }
+      .modal-inner { padding:18px 12px; }
     }
   </style>
 </head>
@@ -208,7 +430,7 @@
 <!-- ══ NAV ══ -->
 <nav id="nav">
   <div class="logo">
-    <svg width="36" height="36" viewBox="0 0 100 100" fill="none">
+    <svg width="36" height="36" viewBox="0 0 100 100" fill="none" role="img" aria-label="Logo Code Céleste">
       <rect x="4" y="4" width="92" height="92" rx="18" fill="#0a0a1a" stroke="#7C3AED" stroke-width="3"/>
       <polyline points="30,28 14,50 30,72" fill="none" stroke="#7C3AED" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
       <polyline points="70,28 86,50 70,72" fill="none" stroke="#7C3AED" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -225,43 +447,32 @@
   <button class="btn-nav cta-main" onclick="openModal()">Ma page gratuite</button>
 </nav>
 
+<noscript>
+  <div style="background:#7C3AED;color:#fff;text-align:center;padding:16px;font-size:14px;">
+    Ce site nécessite JavaScript pour fonctionner correctement. Veuillez activer JavaScript dans votre navigateur.
+  </div>
+</noscript>
+
+<main>
+
 <!-- ══ HERO ══ -->
 <section id="hero">
   <div class="float-anim" style="position:absolute;top:20%;left:15%;width:300px;height:300px;background:radial-gradient(circle,rgba(124,58,237,.09),transparent 70%);border-radius:50%;pointer-events:none;"></div>
   <div class="float-anim2" style="position:absolute;bottom:10%;right:10%;width:250px;height:250px;background:radial-gradient(circle,rgba(34,211,238,.06),transparent 70%);border-radius:50%;pointer-events:none;"></div>
 
   <div style="max-width:750px;margin:0 auto;position:relative;animation:fadeUp .8s cubic-bezier(.16,1,.3,1);">
-    <div class="badge">🏗️ Pour les artisans & BTP de La Réunion</div>
-    <h1>Votre site internet pro.<br><span class="shimmer-text">En 7 jours.</span> Sans vous ruiner.</h1>
-    <p class="subtitle">On crée votre première page d'accueil <strong>gratuitement</strong>. Si ça vous plaît, on continue. Sinon, vous ne devez rien.</p>
+    <div class="badge">🏗️ Fait à La Réunion, pour les artisans réunionnais</div>
+    <h1>Votre site internet pro.<br><span class="shimmer-text">En 7 jours.</span> À partir de 1 000€.</h1>
+    <p class="subtitle">On vous crée une première page d'accueil <strong>gratuitement</strong> pour vous montrer le résultat. Si ça vous plaît, on fait le site complet. Sinon, vous ne payez rien.</p>
     <button class="btn-hero cta-main cta-glow" onclick="openModal()">
-      Je veux voir ma page gratuite
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Je veux ma page gratuite
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <p class="hero-fine">✓ Gratuit &nbsp; ✓ Sans engagement &nbsp; ✓ Résultat en 48h</p>
+    <p class="hero-fine">✓ Première page gratuite &nbsp; ✓ Zéro engagement &nbsp; ✓ Page prête en 48h</p>
   </div>
 </section>
 
-<!-- ══ COMPARATIF ══ -->
-<section class="reveal">
-  <div class="container">
-    <h2 class="text-center" style="font-size:clamp(24px,4vw,38px);font-weight:800;margin-bottom:12px;">Agence classique <span style="color:#8b8bab;font-weight:400;font-size:.7em;">vs</span> <span style="color:#A770FF;">Code Céleste</span></h2>
-    <p class="text-center" style="color:#8b8bab;font-size:15px;margin-bottom:40px;">Pourquoi payer plus pour moins bien ?</p>
-    <div class="comp-table">
-      <div class="comp-header">
-        <div></div>
-        <div class="bad-h">Agence classique</div>
-        <div class="good-h">Code Céleste ✨</div>
-      </div>
-      <div id="comp-rows"></div>
-    </div>
-    <div class="text-center" style="margin-top:32px;">
-      <button class="cta-main" onclick="openModal()" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;padding:15px 36px;border-radius:12px;font-weight:700;font-size:16px;box-shadow:0 0 30px rgba(124,58,237,.2);">Je choisis Code Céleste →</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══ PROBLEM ══ -->
+<!-- ══ PROBLEM (avant le comparatif pour établir la douleur) ══ -->
 <section class="reveal">
   <div class="container">
     <h2 class="text-center" style="font-size:clamp(24px,4vw,38px);font-weight:800;margin-bottom:12px;">En 2026, <span style="color:#A770FF;">pas de site = pas de clients</span></h2>
@@ -283,9 +494,28 @@
         <div class="avatar-card float-anim3">
           <div class="avatar-initial">M</div>
           <span style="font-weight:700;font-size:16px;">Maxime</span>
-          <span style="font-size:12px;color:#8b8bab;">Fondateur & Dev</span>
+          <span style="font-size:12px;color:#8b8bab;">Fondateur</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARATIF (après le problème, le visiteur comprend maintenant pourquoi comparer) ══ -->
+<section class="reveal">
+  <div class="container">
+    <h2 class="text-center" style="font-size:clamp(24px,4vw,38px);font-weight:800;margin-bottom:12px;">Agence classique <span style="color:#8b8bab;font-weight:400;font-size:.7em;">vs</span> <span style="color:#A770FF;">Code Céleste</span></h2>
+    <p class="text-center" style="color:#8b8bab;font-size:15px;margin-bottom:40px;">Ce qu'une agence facture 4 000€, on vous le livre pour 1 000€. Comparez vous-même.</p>
+    <div class="comp-table">
+      <div class="comp-header">
+        <div></div>
+        <div class="bad-h">Agence classique</div>
+        <div class="good-h">Code Céleste ✨</div>
+      </div>
+      <div id="comp-rows"></div>
+    </div>
+    <div class="text-center" style="margin-top:32px;">
+      <button class="cta-main" onclick="openModal()" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;padding:15px 36px;border-radius:12px;font-weight:700;font-size:16px;box-shadow:0 0 30px rgba(124,58,237,.2);">Je veux ma page gratuite →</button>
     </div>
   </div>
 </section>
@@ -297,7 +527,7 @@
   </div>
 </section>
 
-<!-- ══ OFFER ══ -->
+<!-- ══ OFFER + GARANTIE (fusionnés pour rassurer au moment du prix) ══ -->
 <section class="reveal">
   <div class="container-sm">
     <h2 class="text-center" style="font-size:clamp(24px,4vw,38px);font-weight:800;margin-bottom:44px;">Notre offre, <span style="color:#A770FF;">c'est simple</span></h2>
@@ -306,27 +536,23 @@
       <div class="text-center" style="margin-bottom:30px;padding-top:10px;">
         <div class="offer-old">Prix agence : 4 000 — 5 000€</div>
         <div class="offer-price">À partir de 1 000€</div>
-        <div class="offer-sub">Paiement en plusieurs fois possible</div>
+        <div class="offer-sub">Soit seulement 250€ par mois en 4 fois sans frais</div>
       </div>
       <ul class="checklist" id="offer-checklist"></ul>
       <button class="cta-main btn-primary" onclick="openModal()">Je veux ma page gratuite →</button>
     </div>
-  </div>
-</section>
 
-<!-- ══ GARANTIE ══ -->
-<section class="reveal">
-  <div class="container-sm">
-    <div class="guarantee-box">
+    <!-- Garantie intégrée sous l'offre -->
+    <div class="guarantee-box" style="margin-top:28px;">
       <div style="position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(52,211,153,.08),transparent 70%);pointer-events:none;border-radius:50%;"></div>
       <div style="position:relative;">
-        <div style="font-size:52px;margin-bottom:16px;">🛡️</div>
-        <h2 style="font-size:clamp(22px,4vw,32px);font-weight:800;margin-bottom:12px;">Notre garantie <span style="color:#34d399;">zéro risque</span></h2>
-        <p style="font-size:16px;color:#8b8bab;max-width:500px;margin:0 auto;line-height:1.65;">On crée votre première page d'accueil <strong style="color:#ededf4;">gratuitement</strong>, sans aucun engagement. Si le résultat ne vous plaît pas, vous ne payez rien. Zéro frais cachés, zéro surprise.</p>
+        <div style="font-size:42px;margin-bottom:12px;" aria-hidden="true">🛡️</div>
+        <h2 style="font-size:clamp(20px,3.5vw,28px);font-weight:800;margin-bottom:10px;">Notre garantie <span style="color:#34d399;">zéro risque</span></h2>
+        <p style="font-size:15px;color:#8b8bab;max-width:500px;margin:0 auto;line-height:1.65;">On crée votre première page d'accueil <strong style="color:#ededf4;">gratuitement</strong>, sans aucun engagement. Si le résultat ne vous plaît pas, vous ne payez rien. Zéro frais cachés, zéro surprise.</p>
         <div class="g-chips">
-          <div class="g-chip"><span>💰</span><span>Première page 100% gratuite</span></div>
-          <div class="g-chip"><span>🤝</span><span>Zéro engagement</span></div>
-          <div class="g-chip"><span>↩️</span><span>Pas satisfait = vous ne devez rien</span></div>
+          <div class="g-chip"><span aria-hidden="true">💰</span><span>Première page 100% gratuite</span></div>
+          <div class="g-chip"><span aria-hidden="true">🤝</span><span>Zéro engagement</span></div>
+          <div class="g-chip"><span aria-hidden="true">↩️</span><span>Pas satisfait = vous ne devez rien</span></div>
         </div>
       </div>
     </div>
@@ -354,18 +580,20 @@
   <div class="float-anim" style="position:absolute;top:30%;left:20%;width:300px;height:300px;background:radial-gradient(circle,rgba(124,58,237,.09),transparent 70%);border-radius:50%;pointer-events:none;"></div>
   <div style="position:relative;">
     <h2>Prêt à avoir un <span class="shimmer-text">vrai site</span> ?</h2>
-    <p>Première page gratuite. Sans engagement. Résultat en 48h.</p>
+    <p>Première page gratuite. Sans engagement. Page prête en 48h.</p>
     <button class="btn-hero cta-main cta-glow" onclick="openModal()">
       Je veux ma page gratuite
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
   </div>
 </section>
 
+</main>
+
 <!-- ══ FOOTER ══ -->
 <footer>
   <div class="logo">
-    <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
+    <svg width="24" height="24" viewBox="0 0 100 100" fill="none" role="img" aria-label="Logo Code Céleste">
       <rect x="4" y="4" width="92" height="92" rx="18" fill="#0a0a1a" stroke="#7C3AED" stroke-width="3"/>
       <polyline points="30,28 14,50 30,72" fill="none" stroke="#7C3AED" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
       <polyline points="70,28 86,50 70,72" fill="none" stroke="#7C3AED" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -373,47 +601,42 @@
     </svg>
     © 2026 Code Céleste
   </div>
-  <span class="tagline">Sites web pour artisans à La Réunion</span>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;font-size:12px;color:#8b8bab;">
+    <span class="tagline">Sites web pour artisans à La Réunion</span>
+    <span>·</span>
+    <a href="tel:+262692XXXXXX" style="color:#A770FF;text-decoration:none;">📞 0692 XX XX XX</a>
+    <span>·</span>
+    <span>SIRET : XXX XXX XXX XXXXX</span>
+  </div>
 </footer>
 
-<!-- ══ TOAST ══ -->
-<div id="toast">
-  <div class="dot"></div>
-  <div>
-    <div class="t-name" id="toast-name"></div>
-    <div class="t-time" id="toast-time"></div>
-  </div>
-</div>
-
-<!-- ══ ONLINE BADGE ══ -->
-<div id="online-badge">
-  <div class="dot"></div>
-  <span><strong id="online-count">12</strong> personnes sur le site</span>
-</div>
+<!-- ══ BOUTON WHATSAPP FLOTTANT ══ -->
+<a id="whatsapp-btn" href="https://wa.me/262692XXXXXX?text=Bonjour%20Maxime%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20un%20site%20internet" target="_blank" rel="noopener" aria-label="Nous contacter sur WhatsApp" style="position:fixed;bottom:24px;right:24px;z-index:90;background:#25D366;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:transform .2s;">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.124 1.527 5.855L.06 23.493a.5.5 0 00.611.611l5.638-1.467A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.94 0-3.77-.53-5.33-1.45l-.38-.23-3.348.87.89-3.25-.25-.39A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+</a>
 
 <!-- ══ MAIN MODAL ══ -->
-<div id="modal" class="modal-backdrop" style="display:none;">
+<div id="modal" class="modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-label="Demande de page gratuite">
   <div class="modal-bg" onclick="closeModal()"></div>
   <div class="modal-inner modal-box">
-    <button class="modal-close" onclick="closeModal()">✕</button>
+    <button class="modal-close" onclick="closeModal()" aria-label="Fermer">✕</button>
     <div id="modal-content"></div>
   </div>
 </div>
 
 <!-- ══ EXIT POPUP ══ -->
-<div id="exit-popup" class="modal-backdrop modal-overlay" style="display:none;">
+<div id="exit-popup" class="modal-backdrop modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-label="Offre de rappel gratuit">
   <div class="modal-bg" onclick="document.getElementById('exit-popup').style.display='none'"></div>
   <div class="modal-inner modal-box" style="max-width:440px;">
-    <button class="modal-close" onclick="document.getElementById('exit-popup').style.display='none'">✕</button>
+    <button class="modal-close" onclick="document.getElementById('exit-popup').style.display='none'" aria-label="Fermer">✕</button>
     <div id="exit-content">
       <div class="text-center" style="margin-bottom:24px;">
-        <div style="font-size:36px;margin-bottom:12px;">⏳</div>
+        <div style="font-size:36px;margin-bottom:12px;" aria-hidden="true">⏳</div>
         <h3 style="font-size:22px;font-weight:800;margin-bottom:8px;line-height:1.3;">Attendez — votre page gratuite <span style="color:#A770FF;">vous attend</span></h3>
         <p style="color:#8b8bab;font-size:14px;">Laissez vos coordonnées, Maxime vous rappelle. <strong style="color:#ededf4;">C'est gratuit.</strong></p>
       </div>
-      <div class="form-field"><label>Prénom *</label><input type="text" id="exit-prenom" placeholder="Jean-Pierre" /></div>
-      <div class="form-field"><label>Nom</label><input type="text" id="exit-nom" placeholder="Dupont" /></div>
-      <div class="form-field"><label>Téléphone *</label><input type="tel" id="exit-tel" placeholder="0692 XX XX XX" /></div>
+      <div class="form-field"><label for="exit-prenom">Prénom *</label><input type="text" id="exit-prenom" placeholder="Jean-Pierre" /></div>
+      <div class="form-field"><label for="exit-tel">Téléphone *</label><input type="tel" id="exit-tel" placeholder="0692 XX XX XX" /></div>
       <button class="cta-main btn-primary" style="margin-top:4px;" onclick="submitExit()">Maxime me rappelle →</button>
       <p style="text-align:center;font-size:12px;color:#8b8bab;margin-top:10px;">Zéro spam. Juste un appel.</p>
     </div>
@@ -425,17 +648,17 @@
    DATA
 ════════════════════════════════════ */
 const COMP_ROWS = [
-  { label:"Délai",                  bad:"1 mois minimum",   good:"7 jours" },
-  { label:"Prix",                   bad:"4 000 — 5 000€",   good:"Abordable" },
-  { label:"Design",                 bad:"Daté et générique", good:"Moderne & sécurisé" },
-  { label:"Maintenance",            bad:"Payante dès le jour 1", good:"3 mois offerts" },
-  { label:"Engagement",             bad:"12 mois minimum",  good:"Sans engagement" },
-  { label:"Page gratuite avant achat", bad:"Jamais",        good:"Oui ✓" },
+  { label:"Délai",                     bad:"1 mois minimum",        good:"7 jours" },
+  { label:"Prix",                      bad:"4 000 — 5 000€",        good:"À partir de 1 000€" },
+  { label:"Apparence",                 bad:"Daté et générique",      good:"Moderne et adapté mobile" },
+  { label:"Suivi après livraison",     bad:"Payant dès le jour 1",   good:"3 mois offerts" },
+  { label:"Engagement",               bad:"12 mois minimum",        good:"Sans engagement" },
+  { label:"Page gratuite avant achat", bad:"Jamais",                 good:"Oui ✓" },
 ];
 const PROBLEMS = [
-  { emoji:"🔍", title:"Invisible sur Google",   desc:'Vos clients tapent "couvreur Saint-Denis" et vous n\'apparaissez pas.' },
-  { emoji:"💀", title:"Site qui date de 2015",  desc:"En 3 secondes, le client juge votre professionnalisme sur votre site." },
-  { emoji:"💸", title:"Agences trop chères",    desc:"4 000€ à 5 000€ pour un site vitrine ? En 2026, c'est fini." },
+  { emoji:"🔍", title:"Invisible sur Google",   desc:'Vos clients tapent "couvreur Saint-Denis" et vous n\'apparaissez pas. 80% des Réunionnais cherchent un artisan en ligne avant d\'appeler.' },
+  { emoji:"💀", title:"Site qui date de 2015",  desc:"Un site vieillot, c'est comme une camionnette rouillée devant un chantier. Le client passe son chemin." },
+  { emoji:"💸", title:"Agences trop chères",    desc:"4 000€ à 5 000€ pour un site ? En 2026, c'est fini. Il y a mieux et moins cher." },
 ];
 const FOUNDER_ITEMS = ["Développeur basé à La Réunion", "Rappel dans les 24-48h", "Votre interlocuteur unique"];
 const STATS = [
@@ -444,12 +667,12 @@ const STATS = [
   { n:0,  suffix:"€",      label:"Coût de la 1ère page" },
 ];
 const OFFER_ITEMS = [
-  "Site vitrine personnalisé à votre métier",
-  "Design moderne, sécurisé et responsive",
+  "Un site sur-mesure adapté à votre métier",
+  "Beau sur téléphone, tablette et ordinateur",
   "Livré en moins de 7 jours",
-  "3 mois de maintenance offerte",
-  "Première page créée gratuitement",
-  "Optimisé pour Google (SEO de base)"
+  "3 mois de suivi offerts (on s'occupe de tout)",
+  "Première page créée gratuitement avant de payer",
+  "Visible sur Google quand vos clients vous cherchent"
 ];
 const STEPS = [
   { icon:"📝", title:"Remplissez le formulaire",  desc:"2 minutes, quelques questions sur votre métier.", time:"2 min" },
@@ -458,25 +681,18 @@ const STEPS = [
   { icon:"🚀", title:"Validation et lancement",    desc:"Site complet livré en 7 jours.",                  time:"7 jours" },
 ];
 const FAQS = [
-  { q:"C'est quoi le piège ?", a:"Aucun piège. On crée votre première page gratuitement, sans engagement. Si ça vous plaît pas, vous ne devez rien." },
-  { q:"Pourquoi c'est moins cher qu'une agence ?", a:"On a optimisé nos process avec des outils modernes. Moins de temps perdu = prix plus bas pour vous." },
-  { q:"3 mois de maintenance offerte, ça inclut quoi ?", a:"Hébergement, maintenance technique, mises à jour de sécurité et modifications mineures de contenu. Tout est inclus pendant 3 mois." },
-  { q:"Je peux arrêter quand je veux ?", a:"Oui. Sans engagement, sans frais de résiliation." },
-  { q:"Paiement en plusieurs fois ?", a:"On s'adapte à vous. 2x, 3x ou 4x sans frais." },
+  { q:"C'est quoi le piège ?", a:"Aucun piège. On crée votre première page gratuitement, sans engagement. Si ça vous plaît pas, vous ne devez rien. Zéro frais cachés." },
+  { q:"Pourquoi c'est moins cher qu'une agence ?", a:"Maxime utilise les meilleurs outils du moment pour construire votre site plus vite, sans sacrifier la qualité. Ce qui prend 3 semaines à une agence classique, on le fait en 7 jours. Moins de temps passé = un prix plus juste pour vous." },
+  { q:"3 mois de suivi offerts, ça inclut quoi ?", a:"On s'occupe de tout le technique : votre site reste en ligne, protégé, et à jour. Et si vous voulez changer un texte ou une photo, on le fait pour vous. Pendant 3 mois, c'est offert." },
+  { q:"Je peux arrêter quand je veux ?", a:"Oui. Sans engagement, sans frais de résiliation. Votre site vous appartient." },
+  { q:"Paiement en plusieurs fois ?", a:"Bien sûr. On s'adapte à vous : 2x, 3x ou 4x sans frais. Soit seulement 250€ par mois en 4 fois." },
+  { q:"Qu'est-ce que je reçois pour 1 000€ ?", a:"Un site complet : page d'accueil, page de vos services, page contact avec formulaire, et galerie photos de vos réalisations. Le tout adapté à votre métier et visible sur Google." },
 ];
-const TOASTS = [
-  { name:"Adam",     job:"Couvreur",       city:"Saint-Denis" },
-  { name:"Marie",    job:"Plombier",       city:"Le Tampon" },
-  { name:"Jean-Luc", job:"Électricien",    city:"Saint-Pierre" },
-  { name:"Sophie",   job:"Paysagiste",     city:"Saint-Paul" },
-  { name:"Yann",     job:"Maçon",          city:"Sainte-Marie" },
-  { name:"Nadia",    job:"Photovoltaïque", city:"Saint-André" },
-];
+/* TOASTS et compteur en ligne retirés (faux social proof) */
+/* À réactiver avec de vrais témoignages clients quand disponibles */
 const FORM_STEPS = [
   { q:"Quel est votre métier ?",              opts:["Couvreur","Plombier","Électricien","Maçon","Photovoltaïque","Paysagiste","Climaticien","Pisciniste","Autre"], key:"metier" },
-  { q:"Avez-vous déjà un site internet ?",    opts:["Oui, mais je veux mieux","Non, j'en veux un"], key:"site_existant" },
-  { q:"Quel est votre objectif principal ?",  opts:["Plus de clients","Être visible sur Google","Avoir un site pro","Moderniser mon image"], key:"objectif" },
-  { q:"Quelle est votre problématique actuelle ?", opts:["Pas assez de visibilité","Mon site est trop vieux","Trop cher ailleurs","Je ne sais pas par où commencer"], key:"problematique" },
+  { q:"Avez-vous déjà un site internet ?",    opts:["Oui, mais je veux mieux","Non, pas encore"], key:"site_existant" },
 ];
 
 /* ════════════════════════════════════
@@ -614,61 +830,46 @@ function initAnimNums() {
 }
 
 /* ════════════════════════════════════
-   ONLINE COUNT FLUCTUATION
-════════════════════════════════════ */
-let onlineCount = 12;
-function initOnline() {
-  setInterval(() => {
-    onlineCount = Math.max(8, onlineCount + (Math.random() > 0.5 ? 1 : -1));
-    document.getElementById('online-count').textContent = onlineCount;
-  }, 8000);
-}
-
-/* ════════════════════════════════════
-   SOCIAL PROOF TOASTS
-════════════════════════════════════ */
-let toastIdx = 0;
-function showToast() {
-  const t = TOASTS[toastIdx % TOASTS.length];
-  const mins = Math.floor(Math.random() * 12) + 1;
-  const el = document.getElementById('toast');
-  document.getElementById('toast-name').textContent = `${t.name}, ${t.job} à ${t.city}`;
-  document.getElementById('toast-time').textContent = `a réservé son appel il y a ${mins} min`;
-  el.style.display = 'flex';
-  el.className = 'toast-enter';
-  setTimeout(() => { el.className = 'toast-exit'; }, 4500);
-  setTimeout(() => { el.style.display = 'none'; }, 5000);
-  toastIdx++;
-}
-function initToasts() {
-  setTimeout(() => { showToast(); setInterval(showToast, 18000); }, 5000);
-}
-
-/* ════════════════════════════════════
-   EXIT INTENT
+   EXIT INTENT (desktop + mobile)
 ════════════════════════════════════ */
 let exitShown = false;
+function showExitPopup() {
+  const modal = document.getElementById('modal');
+  if (modal.style.display !== 'none') return;
+  document.getElementById('exit-popup').style.display = 'flex';
+  exitShown = true;
+}
 function initExit() {
+  // Desktop : sortie du curseur par le haut
   document.addEventListener('mouseleave', e => {
-    if (e.clientY <= 0 && !exitShown) {
-      const modal = document.getElementById('modal');
-      if (modal.style.display !== 'none') return;
-      document.getElementById('exit-popup').style.display = 'flex';
-      exitShown = true;
-    }
+    if (e.clientY <= 0 && !exitShown) showExitPopup();
+  });
+  // Mobile : inactivité de 45 secondes
+  let inactivityTimer = setTimeout(() => { if (!exitShown) showExitPopup(); }, 45000);
+  ['scroll','touchstart','click'].forEach(evt => {
+    document.addEventListener(evt, () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => { if (!exitShown) showExitPopup(); }, 45000);
+    }, { passive: true });
   });
 }
 function submitExit() {
   const p = document.getElementById('exit-prenom').value;
   const t = document.getElementById('exit-tel').value;
   if (!p || !t) return;
+  // TODO: envoyer les données vers votre API backend
+  // fetch('https://votre-api.codeceleste.re/leads', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ prenom: p, telephone: t, source: 'exit-popup' })
+  // });
   document.getElementById('exit-content').innerHTML = `
     <div class="text-center" style="padding:20px 0;">
       <div style="font-size:48px;margin-bottom:12px;">✅</div>
       <h3 style="font-size:22px;font-weight:700;">Merci !</h3>
       <p style="color:#8b8bab;">Maxime vous recontacte très vite.</p>
     </div>`;
-  setTimeout(() => { document.getElementById('exit-popup').style.display = 'none'; }, 2000);
+  setTimeout(() => { document.getElementById('exit-popup').style.display = 'none'; }, 2500);
 }
 
 /* ════════════════════════════════════
@@ -678,10 +879,10 @@ let formStep = 0;
 let formData = {};
 let contactData = { prenom:'', nom:'', telephone:'', entreprise:'', site:'' };
 
-function openModal() { formStep = 0; formData = {}; contactData = { prenom:'', nom:'', telephone:'', entreprise:'', site:'' }; renderModal(); document.getElementById('modal').style.display = 'flex'; }
+function openModal() { formStep = 0; formData = {}; contactData = { prenom:'', telephone:'', entreprise:'' }; renderModal(); document.getElementById('modal').style.display = 'flex'; }
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-function totalSteps() { return FORM_STEPS.length + 2; } // steps + contact + calendar
+function totalSteps() { return FORM_STEPS.length + 1; } // qualification + coordonnées
 
 function pct() { return Math.round((formStep / totalSteps()) * 100); }
 
@@ -702,30 +903,23 @@ function renderModal() {
     el.innerHTML = progressHTML() +
       `<div class="form-q">${step.q}</div>
        <div class="choices">
-         ${step.opts.map(o =>
-           `<button class="choice-btn ${formData[step.key] === o ? 'selected' : ''}" onclick="pickChoice('${step.key}','${o}')">${o}</button>`
-         ).join('')}
+         ${step.opts.map(o => {
+           const escaped = o.replace(/'/g, "\\'");
+           return `<button class="choice-btn ${formData[step.key] === o ? 'selected' : ''}" onclick="pickChoice('${step.key}','${escaped}')">${o}</button>`;
+         }).join('')}
        </div>
        ${formStep > 0 ? '<button class="btn-back" onclick="prevStep()">← Retour</button>' : ''}
        <p class="form-note">🔒 Données confidentielles. Zéro spam.</p>`;
   } else if (formStep === FORM_STEPS.length) {
     el.innerHTML = progressHTML() +
       `<div class="form-q">Vos coordonnées</div>
-       <div class="form-field"><label>Prénom *</label><input id="f-prenom" type="text" placeholder="Jean-Pierre" value="${contactData.prenom}" oninput="contactData.prenom=this.value" /></div>
-       <div class="form-field"><label>Nom *</label><input id="f-nom" type="text" placeholder="Dupont" value="${contactData.nom}" oninput="contactData.nom=this.value" /></div>
-       <div class="form-field"><label>Téléphone *</label><input id="f-tel" type="tel" placeholder="0692 XX XX XX" value="${contactData.telephone}" oninput="contactData.telephone=this.value" /></div>
-       <div class="form-field"><label>Entreprise *</label><input id="f-ent" type="text" placeholder="Couverture Dupont" value="${contactData.entreprise}" oninput="contactData.entreprise=this.value" /></div>
-       <div class="form-field"><label>Site actuel (optionnel)</label><input id="f-site" type="text" placeholder="www.monsite.re" value="${contactData.site}" oninput="contactData.site=this.value" /></div>
-       <button class="cta-main btn-primary" style="margin-top:4px;" onclick="nextStepContact()">Continuer →</button>
+       <div class="form-field"><label for="f-prenom">Prénom *</label><input id="f-prenom" type="text" placeholder="Jean-Pierre" value="${contactData.prenom}" oninput="contactData.prenom=this.value" /></div>
+       <div class="form-field"><label for="f-tel">Téléphone *</label><input id="f-tel" type="tel" placeholder="0692 XX XX XX" value="${contactData.telephone}" oninput="contactData.telephone=this.value" /></div>
+       <div class="form-field"><label for="f-ent">Entreprise *</label><input id="f-ent" type="text" placeholder="Couverture Dupont" value="${contactData.entreprise}" oninput="contactData.entreprise=this.value" /></div>
+       <div id="form-error" style="display:none;color:#f87171;font-size:13px;text-align:center;margin-bottom:8px;"></div>
+       <button class="cta-main btn-primary" style="margin-top:4px;" onclick="submitForm()">Maxime me rappelle →</button>
        <button class="btn-back" onclick="prevStep()">← Retour</button>
        <p class="form-note">🔒 Données confidentielles. Zéro spam.</p>`;
-  } else if (formStep === FORM_STEPS.length + 1) {
-    el.innerHTML = progressHTML() +
-      `<div class="form-q" style="margin-bottom:10px;">Choisissez votre créneau</div>
-       <p style="text-align:center;color:#8b8bab;font-size:13px;margin-bottom:20px;">Appel découverte gratuit avec Maxime</p>
-       <div class="cal-placeholder">📅 Calendrier de réservation (intégrez votre lien Calendly / GHL ici)</div>
-       <button class="cta-main btn-primary" onclick="submitForm()">Confirmer mon RDV →</button>
-       <button class="btn-back" onclick="prevStep()">← Retour</button>`;
   } else {
     // Success
     el.innerHTML = `<div class="text-center" style="padding:20px 0;">
@@ -733,7 +927,7 @@ function renderModal() {
       <h3 style="font-size:21px;font-weight:700;margin-bottom:8px;">C'est noté !</h3>
       <p style="color:#8b8bab;font-size:14px;line-height:1.6;margin-bottom:20px;">Maxime vous contacte dans les 24-48h.</p>
       <ul class="success-list">
-        <li>${svgCheck()} SMS WhatsApp de confirmation</li>
+        <li>${svgCheck()} Confirmation par SMS ou WhatsApp</li>
         <li>${svgCheck()} Appel avec Maxime sous 24-48h</li>
         <li>${svgCheck()} Votre page d'accueil créée gratuitement</li>
       </ul>
@@ -747,22 +941,27 @@ function pickChoice(key, val) {
   setTimeout(() => { formStep++; renderModal(); }, 280);
 }
 function prevStep() { if (formStep > 0) { formStep--; renderModal(); } }
-function nextStepContact() {
-  // Sync inputs (in case oninput was slow)
+function submitForm() {
   const p = document.getElementById('f-prenom');
-  const n = document.getElementById('f-nom');
   const t = document.getElementById('f-tel');
   const e = document.getElementById('f-ent');
   if (p) contactData.prenom = p.value;
-  if (n) contactData.nom = n.value;
   if (t) contactData.telephone = t.value;
   if (e) contactData.entreprise = e.value;
-  if (!contactData.prenom || !contactData.nom || !contactData.telephone || !contactData.entreprise) {
-    alert('Merci de remplir tous les champs obligatoires (*)'); return;
+  if (!contactData.prenom || !contactData.telephone || !contactData.entreprise) {
+    const errEl = document.getElementById('form-error');
+    if (errEl) { errEl.textContent = 'Merci de remplir tous les champs obligatoires (*)'; errEl.style.display = 'block'; }
+    return;
   }
-  formStep++; renderModal();
+  // TODO: envoyer les données vers votre API backend
+  // fetch('https://votre-api.codeceleste.re/leads', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ ...formData, ...contactData })
+  // });
+  formStep = FORM_STEPS.length + 1;
+  renderModal();
 }
-function submitForm() { formStep = 999; renderModal(); }
 
 /* ════════════════════════════════════
    INIT
@@ -771,8 +970,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAll();
   initReveal();
   initAnimNums();
-  initOnline();
-  initToasts();
   initExit();
 });
 </script>
